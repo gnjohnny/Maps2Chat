@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { LeadCard } from "@/components/dashboard/LeadCard"
 import { ScraperTrigger } from "@/components/dashboard/ScraperTrigger"
@@ -18,6 +18,12 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
   const [currentTab, setTab] = useState<string>("pending")
   const [searchQuery, setSearchQuery] = useState("")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Clear any active action errors when switching tabs
+  useEffect(() => {
+    setError(null)
+  }, [currentTab])
   
   // Real TanStack Query queries and mutations
   const { data: leads = [], isLoading } = useLeads(currentTab)
@@ -36,9 +42,12 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
 
   const handleTriggerScraper = async () => {
     try {
+      setError(null)
       await triggerScraperMutation.mutateAsync(undefined)
-    } catch (error) {
-      console.error("Scraper execution failed:", error)
+    } catch (err: any) {
+      console.error("Scraper execution failed:", err)
+      const errMsg = err.response?.data?.error || err.message || "Failed to trigger lead sync."
+      setError(`Failed to sync leads: ${errMsg}`)
     }
   }
 
@@ -75,6 +84,7 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
                 setIsAddDialogOpen(false)
               } catch (err) {
                 console.error("Failed to add manual lead:", err)
+                throw err
               }
             }}
             isSubmitting={createLeadMutation.isPending}
@@ -93,6 +103,22 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
       onLogout={onLogout}
       headerActions={headerActions}
     >
+      {/* Error Alert Banner */}
+      {error && (
+        <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg p-4 flex items-center justify-between animate-fade-in mb-2">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">Error:</span>
+            <span>{error}</span>
+          </div>
+          <button 
+            onClick={() => setError(null)} 
+            className="text-xs font-semibold underline hover:no-underline cursor-pointer transition-colors"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Search Bar */}
       <div className="relative max-w-md w-full">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -128,8 +154,24 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
             <LeadCard
               key={lead.id}
               lead={lead}
-              onContact={(id) => contactMutation.mutate(id)}
-              onArchive={(id) => archiveMutation.mutate(id)}
+              onContact={(id) => {
+                setError(null)
+                contactMutation.mutate(id, {
+                  onError: (err: any) => {
+                    const errMsg = err.response?.data?.error || err.message || "Failed to update contact status."
+                    setError(`Failed to update contact status: ${errMsg}`)
+                  }
+                })
+              }}
+              onArchive={(id) => {
+                setError(null)
+                archiveMutation.mutate(id, {
+                  onError: (err: any) => {
+                    const errMsg = err.response?.data?.error || err.message || "Failed to archive lead."
+                    setError(`Failed to archive lead: ${errMsg}`)
+                  }
+                })
+              }}
             />
           ))}
         </div>

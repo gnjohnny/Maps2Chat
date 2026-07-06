@@ -22,7 +22,7 @@ interface GoogleUser {
 authRouter.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/login",
+    failureRedirect: `${process.env.CLIENT_URL || "http://localhost:5173"}/login`,
     session: false,
   }),
   (req, res) => {

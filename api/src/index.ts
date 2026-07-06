@@ -1,6 +1,6 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import passport from "passport";
 import { leadRouter } from "./routes/leadRoutes.js";
 import { authRouter } from "./routes/authRoutes.js";
@@ -10,9 +10,6 @@ import {
   startIngestionScheduler,
   runIngestionDaemon,
 } from "./daemon/scraper.js";
-
-// Load environment configurations
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

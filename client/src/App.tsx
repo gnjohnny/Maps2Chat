@@ -36,23 +36,12 @@ function parseJwt(token: string) {
 function AppRoutes() {
   const navigate = useNavigate()
 
+  // Extract and save token synchronously during render initialization to avoid race conditions with queries
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return !!localStorage.getItem("maps2chat_token")
-  })
-  
-  const [user, setUser] = useState<{ name: string; email: string }>(() => {
-    const saved = localStorage.getItem("user_profile")
-    return saved ? JSON.parse(saved) : { name: "Nairobi Operator", email: "operator@maps2chat.co.ke" }
-  })
-
-  useEffect(() => {
-    // Capture URL token query param from Google OAuth redirect callback
     const params = new URLSearchParams(window.location.search)
     const token = params.get("token")
-    
     if (token) {
       localStorage.setItem("maps2chat_token", token)
-      
       const payload = parseJwt(token)
       if (payload) {
         const profile = {
@@ -60,11 +49,21 @@ function AppRoutes() {
           email: payload.email || "operator@maps2chat.co.ke",
         }
         localStorage.setItem("user_profile", JSON.stringify(profile))
-        setUser(profile)
       }
-      
-      setIsAuthenticated(true)
-      
+      return true
+    }
+    return !!localStorage.getItem("maps2chat_token")
+  })
+  
+  const [user] = useState<{ name: string; email: string }>(() => {
+    const saved = localStorage.getItem("user_profile")
+    return saved ? JSON.parse(saved) : { name: "Nairobi Operator", email: "operator@maps2chat.co.ke" }
+  })
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const token = params.get("token")
+    if (token) {
       // Clean query parameters from address bar
       navigate("/", { replace: true })
     }

@@ -2,9 +2,9 @@
 
 ## Current Status
 
-- **Active Phase**: Phase 6 — Client API & Query Integration
-- **Last Completed Item**: Completed backend route protection and global error handling; database schema configuration, migrations, and ORM setup finalized by developer.
-- **Next Item**: Wire React frontend state to backend API endpoints using TanStack Query.
+- **Active Phase**: Phase 7 — Verification & Polishing
+- **Last Completed Item**: Wired React frontend states and mutations to backend Express API endpoints using TanStack Query; added validation error displays, alert banners, and resolved OAuth strategy callback paths.
+- **Next Item**: Deploy configurations to live hosting, setup Google Places/OAuth credentials, and perform end-to-end integration testing.
 
 ## Progress Checklist
 
@@ -57,11 +57,11 @@
 
 ### Phase 6 — Client API & Query Integration
 
-- [ ] Setup TanStack Query context provider
-- [ ] Integrate React Router mapping for `/` and `/login`
-- [ ] Wire dashboard lists to backend Express API (`GET /api/leads`)
-- [ ] Create TanStack Query mutations for `PATCH /api/leads/:id/contact`
-- [ ] Construct form validation schemas using Zod and React Hook Form (for manual archiving)
+- [x] Setup TanStack Query context provider
+- [x] Integrate React Router mapping for `/` and `/login`
+- [x] Wire dashboard lists to backend Express API (`GET /api/leads`)
+- [x] Create TanStack Query mutations for `PATCH /api/leads/:id/contact`
+- [x] Construct form validation schemas using Zod and React Hook Form (for manual archiving/creation)
 
 ### Phase 7 — Verification & Polishing
 

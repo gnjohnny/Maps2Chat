@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -20,19 +21,31 @@ const formSchema = z.object({
 export type ManualLeadFormValues = z.infer<typeof formSchema>
 
 interface ManualLeadFormProps {
-  onSubmit: (values: ManualLeadFormValues) => void
+  onSubmit: (values: ManualLeadFormValues) => Promise<void>
   isSubmitting?: boolean
 }
 
 export function ManualLeadForm({ onSubmit, isSubmitting }: ManualLeadFormProps) {
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
   const form = useForm<ManualLeadFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", whatsappNumber: "", address: "" },
   })
 
+  const handleSubmit = async (values: ManualLeadFormValues) => {
+    try {
+      setSubmitError(null)
+      await onSubmit(values)
+    } catch (err: any) {
+      const errMsg = err.response?.data?.error || err.message || "Failed to save lead."
+      setSubmitError(errMsg)
+    }
+  }
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-2">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pt-2">
         <FormField
           control={form.control}
           name="name"
@@ -72,6 +85,11 @@ export function ManualLeadForm({ onSubmit, isSubmitting }: ManualLeadFormProps) 
             </FormItem>
           )}
         />
+        {submitError && (
+          <div className="bg-destructive/15 border border-destructive/30 text-destructive text-xs rounded-md p-3 font-medium animate-fade-in">
+            {submitError}
+          </div>
+        )}
         <div className="flex justify-end pt-2">
           <Button 
             type="submit" 
