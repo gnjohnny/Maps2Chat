@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import "../config/passport.js"; // ensure passport config is executed
+import "../config/passport"; // ensure passport config is executed
 
 export const authRouter = Router();
 
@@ -22,7 +22,7 @@ interface GoogleUser {
 authRouter.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: `${process.env.CLIENT_URL || "http://localhost:5173"}/login`,
+    failureRedirect: `${process.env.CLIENT_URL!}/login`,
     session: false,
   }),
   (req, res) => {
@@ -31,7 +31,7 @@ authRouter.get(
 
       const token = jwt.sign(
         { id: user.id, name: user.displayName, email: user.email },
-        process.env.JWT_SECRET || "your_jwt_signing_secret_here",
+        process.env.JWT_SECRET!,
         { expiresIn: "7d" },
       );
 

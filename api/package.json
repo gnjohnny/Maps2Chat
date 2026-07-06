@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "Backend API for Maps2Chat",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "dev": "cls && nodemon --watch src --ext ts --exec tsx src/index.ts",
+    "build": "cls && tsc",
+    "start": "cls && node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
@@ -37,7 +36,7 @@
     "nodemon": "^3.1.9",
     "prisma": "^7.8.0",
     "ts-node": "^10.9.2",
-    "tsx": "^4.19.2",
+    "tsx": "^4.23.0",
     "typescript": "^5.7.2"
   }
 }

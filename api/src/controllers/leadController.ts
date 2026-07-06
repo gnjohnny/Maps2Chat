@@ -1,24 +1,30 @@
-import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../db.js';
-import { LeadStatus } from '@prisma/client';
-import { formatKenyaPhoneNumber } from '../utils/phoneFormatter.js';
+import { Request, Response, NextFunction } from "express";
+import { prisma } from "../db";
+import { LeadStatus } from "@prisma/client";
+import { formatKenyaPhoneNumber } from "../utils/phoneFormatter";
 
-export async function getLeads(req: Request, res: Response, next: NextFunction) {
+export async function getLeads(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { status } = req.query;
-    
+
     const filterStatus = status
       ? (String(status).toUpperCase() as LeadStatus)
       : undefined;
 
     if (filterStatus && !Object.values(LeadStatus).includes(filterStatus)) {
-      res.status(400).json({ success: false, error: 'Invalid lead status query parameter' });
+      res
+        .status(400)
+        .json({ success: false, error: "Invalid lead status query parameter" });
       return;
     }
 
     const leads = await prisma.lead.findMany({
       where: filterStatus ? { status: filterStatus } : undefined,
-      orderBy: { fetchedAt: 'desc' },
+      orderBy: { fetchedAt: "desc" },
     });
 
     res.json({ success: true, data: leads });
@@ -27,7 +33,11 @@ export async function getLeads(req: Request, res: Response, next: NextFunction) 
   }
 }
 
-export async function contactLead(req: Request, res: Response, next: NextFunction) {
+export async function contactLead(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { id } = req.params;
 
@@ -45,7 +55,11 @@ export async function contactLead(req: Request, res: Response, next: NextFunctio
   }
 }
 
-export async function archiveLead(req: Request, res: Response, next: NextFunction) {
+export async function archiveLead(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { id } = req.params;
 
@@ -62,23 +76,39 @@ export async function archiveLead(req: Request, res: Response, next: NextFunctio
   }
 }
 
-export async function createLead(req: Request, res: Response, next: NextFunction) {
+export async function createLead(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   try {
     const { name, address, whatsappNumber } = req.body;
 
     if (!name || !address || !whatsappNumber) {
-      res.status(400).json({ success: false, error: 'Missing required fields: name, address, whatsappNumber' });
+      res
+        .status(400)
+        .json({
+          success: false,
+          error: "Missing required fields: name, address, whatsappNumber",
+        });
       return;
     }
 
-    if (!address.toLowerCase().includes('kenya')) {
-      res.status(400).json({ success: false, error: "Address must contain the country 'Kenya'" });
+    if (!address.toLowerCase().includes("kenya")) {
+      res
+        .status(400)
+        .json({
+          success: false,
+          error: "Address must contain the country 'Kenya'",
+        });
       return;
     }
 
     const formattedPhone = formatKenyaPhoneNumber(whatsappNumber);
     if (!formattedPhone) {
-      res.status(400).json({ success: false, error: 'Invalid Kenyan phone number format' });
+      res
+        .status(400)
+        .json({ success: false, error: "Invalid Kenyan phone number format" });
       return;
     }
 
@@ -87,15 +117,17 @@ export async function createLead(req: Request, res: Response, next: NextFunction
 
     const existingLead = await prisma.lead.findFirst({
       where: {
-        OR: [
-          { placeId },
-          { whatsappNumber: formattedPhone }
-        ]
-      }
+        OR: [{ placeId }, { whatsappNumber: formattedPhone }],
+      },
     });
 
     if (existingLead) {
-      res.status(400).json({ success: false, error: 'Lead with this phone number already exists' });
+      res
+        .status(400)
+        .json({
+          success: false,
+          error: "Lead with this phone number already exists",
+        });
       return;
     }
 
@@ -106,7 +138,7 @@ export async function createLead(req: Request, res: Response, next: NextFunction
         address: String(address),
         whatsappNumber: formattedPhone,
         status: LeadStatus.PENDING,
-      }
+      },
     });
 
     res.json({ success: true, data: newLead });

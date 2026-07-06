@@ -2,14 +2,11 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import passport from "passport";
-import { leadRouter } from "./routes/leadRoutes.js";
-import { authRouter } from "./routes/authRoutes.js";
-import { requireAuth } from "./middleware/auth.js";
-import { errorHandler } from "./middleware/errorHandler.js";
-import {
-  startIngestionScheduler,
-  runIngestionDaemon,
-} from "./daemon/scraper.js";
+import { leadRouter } from "./routes/leadRoutes";
+import { authRouter } from "./routes/authRoutes";
+import { requireAuth } from "./middleware/auth";
+import { errorHandler } from "./middleware/errorHandler";
+import { startIngestionScheduler, runIngestionDaemon } from "./daemon/scraper";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
