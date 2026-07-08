@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Login } from "@/pages/Login"
 import { Dashboard } from "@/pages/Dashboard"
+import { LeadDetails } from "@/pages/LeadDetails"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -98,6 +99,16 @@ function AppRoutes() {
         element={
           isAuthenticated ? (
             <Dashboard onLogout={handleLogout} user={user} />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route
+        path="/leads/:id"
+        element={
+          isAuthenticated ? (
+            <LeadDetails />
           ) : (
             <Navigate to="/login" replace />
           )

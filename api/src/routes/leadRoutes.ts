@@ -4,6 +4,8 @@ import {
   contactLead,
   archiveLead,
   createLead,
+  getLeadById,
+  deleteLead,
 } from "../controllers/leadController";
 import { requireAuth } from "../middleware/auth";
 
@@ -14,5 +16,7 @@ leadRouter.use(requireAuth);
 
 leadRouter.get("/", getLeads);
 leadRouter.post("/", createLead);
+leadRouter.get("/:id", getLeadById);
 leadRouter.patch("/:id/contact", contactLead);
 leadRouter.patch("/:id/archive", archiveLead);
+leadRouter.delete("/:id", deleteLead);

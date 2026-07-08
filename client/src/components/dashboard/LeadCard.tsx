@@ -2,7 +2,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/ui/StatusBadge"
 import { ContactLink } from "@/components/ui/ContactLink"
-import { Trash2, Phone, MapPin, Calendar } from "lucide-react"
+import { Trash2, Phone, MapPin, Calendar, Loader2 } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export interface Lead {
   id: string
@@ -19,9 +20,21 @@ interface LeadCardProps {
   lead: Lead
   onContact: (id: string) => void
   onArchive: (id: string) => void
+  onDelete?: (id: string) => void
+  isContacting?: boolean
+  isArchiving?: boolean
+  isDeleting?: boolean
 }
 
-export function LeadCard({ lead, onContact, onArchive }: LeadCardProps) {
+export function LeadCard({ 
+  lead, 
+  onContact, 
+  onArchive, 
+  onDelete,
+  isContacting = false, 
+  isArchiving = false,
+  isDeleting = false
+}: LeadCardProps) {
   const formatDate = (dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString("en-KE", {
@@ -41,7 +54,9 @@ export function LeadCard({ lead, onContact, onArchive }: LeadCardProps) {
       <CardHeader className="p-4 pb-2">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-base font-semibold text-foreground tracking-tight line-clamp-1">
-            {lead.name}
+            <Link to={`/leads/${lead.id}`} className="hover:text-emerald-600 dark:hover:text-emerald-400 hover:underline transition-colors">
+              {lead.name}
+            </Link>
           </CardTitle>
           <StatusBadge status={lead.status} />
         </div>
@@ -72,6 +87,8 @@ export function LeadCard({ lead, onContact, onArchive }: LeadCardProps) {
             whatsappNumber={lead.whatsappNumber}
             businessName={lead.name}
             onContactClicked={() => onContact(lead.id)}
+            isLoading={isContacting}
+            disabled={isArchiving}
           />
         )}
         {lead.status !== "ARCHIVED" && (
@@ -79,10 +96,40 @@ export function LeadCard({ lead, onContact, onArchive }: LeadCardProps) {
             variant="outline"
             size="icon"
             onClick={() => onArchive(lead.id)}
-            className="text-red-500 hover:bg-red-50/50 dark:hover:bg-red-950/20 border-slate-200 dark:border-slate-800 hover:text-red-600 size-9 rounded-md shrink-0"
+            disabled={isContacting || isArchiving}
+            className="text-red-500 hover:bg-red-50/50 dark:hover:bg-red-950/20 border-slate-200 dark:border-slate-800 hover:text-red-600 size-9 rounded-md shrink-0 cursor-pointer"
             title="Archive Lead"
           >
-            <Trash2 className="size-4" />
+            {isArchiving ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Trash2 className="size-4" />
+            )}
+          </Button>
+        )}
+        {lead.status === "ARCHIVED" && (
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => {
+              if (window.confirm(`Are you sure you want to permanently delete "${lead.name}"? This action cannot be undone.`)) {
+                onDelete?.(lead.id)
+              }
+            }}
+            disabled={isDeleting}
+            className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold h-9 rounded-md"
+          >
+            {isDeleting ? (
+              <>
+                <Loader2 className="size-3.5 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              <>
+                <Trash2 className="size-3.5" />
+                Delete Permanently
+              </>
+            )}
           </Button>
         )}
       </CardFooter>

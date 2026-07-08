@@ -68,7 +68,7 @@
 - [ ] Perform integration testing for the ingestion scraper daemon
 - [ ] Verify Google OAuth redirect and JWT generation flow
 - [ ] Run edge case testing (phone numbers with missing spacing, duplicates, wrong bounding coordinates)
-- [ ] Polish UI animations and loading spinners using shadcn components
+- [x] Polish UI animations and loading spinners using shadcn components
 
 ---
 
@@ -82,3 +82,4 @@
 | 2026-07-06 | Environment Config        | Separate `.env` files                      | Kept configuration files specific to their execution scopes (`api/.env` and `client/.env`) to prevent leakage.           |
 | 2026-07-06 | Database Choice           | Neon Serverless PostgreSQL with Prisma     | Ensures scalability, compatibility with Node.js serverless execution, and provides robust type-safety via Prisma Client. |
 | 2026-07-06 | UI Theme                  | Emerald styling with Light/Dark Mode       | Aesthetic scheme that feels premium, with states maps matching standard alert definitions.                               |
+| 2026-07-08 | Client Loading States     | Spinner loaders and inputs disable states  | Implemented inline Loader2 states on active mutations (Contact, Archive, Create Lead, Scrape) and disabled form inputs during submit to enrich operator experience and prevent dual-actions. |

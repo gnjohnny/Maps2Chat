@@ -83,3 +83,29 @@ export function useTriggerScraper() {
     },
   });
 }
+
+export function useLead(id: string) {
+  return useQuery<Lead>({
+    queryKey: ["lead", id],
+    queryFn: async () => {
+      const { data } = await api.get(`/leads/${id}`);
+      return data.data;
+    },
+    enabled: !!id,
+  });
+}
+
+export function useDeleteLead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.delete(`/leads/${id}`);
+      return data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+    },
+  });
+}
+

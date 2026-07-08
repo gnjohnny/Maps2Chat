@@ -1,20 +1,40 @@
 
+import { Loader2 } from "lucide-react"
+
 interface ContactLinkProps {
   whatsappNumber: string
   businessName: string
   onContactClicked: () => void
+  isLoading?: boolean
+  disabled?: boolean
 }
 
-export function ContactLink({ whatsappNumber, businessName, onContactClicked }: ContactLinkProps) {
+export function ContactLink({ whatsappNumber, businessName, onContactClicked, isLoading, disabled }: ContactLinkProps) {
   // WhatsApp outreach message templates
   const message = encodeURIComponent(
     `Hello ${businessName}, I found your business on Google Maps and wanted to connect!`
   )
   const href = `https://wa.me/${whatsappNumber}?text=${message}`
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isLoading || disabled) {
+      e.preventDefault()
+      return
+    }
     // Silently notify parent/trigger mutation to transfer state
     onContactClicked()
+  }
+
+  if (isLoading) {
+    return (
+      <button
+        disabled
+        className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-emerald-600/70 text-white shadow px-4 py-2 transition-colors cursor-not-allowed"
+      >
+        <Loader2 className="size-4 animate-spin" />
+        Opening WhatsApp...
+      </button>
+    )
   }
 
   return (
@@ -23,7 +43,9 @@ export function ContactLink({ whatsappNumber, businessName, onContactClicked }: 
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}
-      className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow px-4 py-2 transition-colors cursor-pointer"
+      className={`inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow px-4 py-2 transition-colors cursor-pointer ${
+        disabled ? "pointer-events-none opacity-50" : ""
+      }`}
     >
       <svg
         className="size-4 fill-current"

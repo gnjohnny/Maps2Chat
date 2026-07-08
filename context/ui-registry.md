@@ -26,7 +26,7 @@ This registry lists the central reusable component primitives to construct the M
 - **Tokens/Styles**:
   - Border: `rounded-xl border bg-card shadow-sm hover:shadow-md transition-shadow`
   - Status Badge: Standard status indicators mapping the Lead state.
-  - Action Controls: Grid of buttons positioned on the right or bottom for mobile views.
+  - Action Controls: Grid of buttons positioned on the right or bottom for mobile views. Disables controls and displays spinning inline loaders (`Loader2`) when active contact/archive mutations are pending.
 
 ---
 
@@ -46,6 +46,7 @@ This registry lists the central reusable component primitives to construct the M
 - **Tokens/Styles**:
   - Button styling: `inline-flex items-center justify-center rounded-md text-sm font-medium bg-emerald-600 hover:bg-emerald-700 text-white shadow`
   - WhatsApp Icon: Emerald/white SVG inline icon.
+  - Loading State: Dynamically swaps to a disabled button layout rendering a spinning `Loader2` loader and "Opening WhatsApp..." to prevent multiple clicks and communicate state updates.
 
 ---
 

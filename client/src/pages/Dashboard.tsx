@@ -2,9 +2,9 @@ import { useState, useEffect } from "react"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { LeadCard } from "@/components/dashboard/LeadCard"
 import { ScraperTrigger } from "@/components/dashboard/ScraperTrigger"
-import { useLeads, useContactLead, useArchiveLead, useCreateLead, useTriggerScraper } from "@/hooks/useLeads"
+import { useLeads, useContactLead, useArchiveLead, useCreateLead, useTriggerScraper, useDeleteLead } from "@/hooks/useLeads"
 import { Button } from "@/components/ui/button"
-import { Search, Plus } from "lucide-react"
+import { Search, Plus, Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ManualLeadForm } from "@/components/dashboard/ManualLeadForm"
@@ -31,6 +31,7 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
   const archiveMutation = useArchiveLead()
   const createLeadMutation = useCreateLead()
   const triggerScraperMutation = useTriggerScraper()
+  const deleteMutation = useDeleteLead()
 
   // Filter based on search query
   const filteredLeads = leads.filter(
@@ -154,6 +155,9 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
             <LeadCard
               key={lead.id}
               lead={lead}
+              isContacting={contactMutation.isPending && contactMutation.variables === lead.id}
+              isArchiving={archiveMutation.isPending && archiveMutation.variables === lead.id}
+              isDeleting={deleteMutation.isPending && deleteMutation.variables === lead.id}
               onContact={(id) => {
                 setError(null)
                 contactMutation.mutate(id, {
@@ -169,6 +173,15 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
                   onError: (err: any) => {
                     const errMsg = err.response?.data?.error || err.message || "Failed to archive lead."
                     setError(`Failed to archive lead: ${errMsg}`)
+                  }
+                })
+              }}
+              onDelete={(id) => {
+                setError(null)
+                deleteMutation.mutate(id, {
+                  onError: (err: any) => {
+                    const errMsg = err.response?.data?.error || err.message || "Failed to delete lead permanently."
+                    setError(`Failed to delete lead permanently: ${errMsg}`)
                   }
                 })
               }}
@@ -192,10 +205,19 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
             <Button
               onClick={handleTriggerScraper}
               disabled={triggerScraperMutation.isPending}
-              className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+              className="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex items-center gap-2 cursor-pointer"
             >
-              <Plus className="size-4 mr-2" />
-              Scrape New Leads
+              {triggerScraperMutation.isPending ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Scraping...
+                </>
+              ) : (
+                <>
+                  <Plus className="size-4" />
+                  Scrape New Leads
+                </>
+              )}
             </Button>
           )}
         </div>

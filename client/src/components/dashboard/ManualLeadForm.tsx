@@ -5,6 +5,7 @@ import * as z from "zod"
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Business name must be at least 2 characters." }),
@@ -53,7 +54,7 @@ export function ManualLeadForm({ onSubmit, isSubmitting }: ManualLeadFormProps) 
             <FormItem>
               <FormLabel>Business Name</FormLabel>
               <FormControl>
-                <Input placeholder="E.g., Nairobi Coffee Shop" {...field} />
+                <Input placeholder="E.g., Nairobi Coffee Shop" disabled={isSubmitting} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -66,7 +67,7 @@ export function ManualLeadForm({ onSubmit, isSubmitting }: ManualLeadFormProps) 
             <FormItem>
               <FormLabel>WhatsApp Number</FormLabel>
               <FormControl>
-                <Input placeholder="E.g., 254712345678 or 0712345678" {...field} />
+                <Input placeholder="E.g., 254712345678 or 0712345678" disabled={isSubmitting} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -79,7 +80,7 @@ export function ManualLeadForm({ onSubmit, isSubmitting }: ManualLeadFormProps) 
             <FormItem>
               <FormLabel>Formatted Address</FormLabel>
               <FormControl>
-                <Input placeholder="E.g., Ngong Road, Nairobi, Kenya" {...field} />
+                <Input placeholder="E.g., Ngong Road, Nairobi, Kenya" disabled={isSubmitting} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -94,9 +95,16 @@ export function ManualLeadForm({ onSubmit, isSubmitting }: ManualLeadFormProps) 
           <Button 
             type="submit" 
             disabled={isSubmitting} 
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium w-full sm:w-auto"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium w-full sm:w-auto flex items-center justify-center gap-2 cursor-pointer"
           >
-            {isSubmitting ? "Saving..." : "Add Lead"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Add Lead"
+            )}
           </Button>
         </div>
       </form>

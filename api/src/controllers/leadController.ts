@@ -146,3 +146,63 @@ export async function createLead(
     next(error);
   }
 }
+
+export async function getLeadById(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.params;
+
+    const lead = await prisma.lead.findUnique({
+      where: { id: String(id) },
+    });
+
+    if (!lead) {
+      res.status(404).json({ success: false, error: "Lead not found" });
+      return;
+    }
+
+    res.json({ success: true, data: lead });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteLead(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    const { id } = req.params;
+
+    // Retrieve lead to check its status
+    const lead = await prisma.lead.findUnique({
+      where: { id: String(id) },
+    });
+
+    if (!lead) {
+      res.status(404).json({ success: false, error: "Lead not found" });
+      return;
+    }
+
+    if (lead.status !== LeadStatus.ARCHIVED) {
+      res.status(400).json({
+        success: false,
+        error: "Only archived leads can be permanently deleted",
+      });
+      return;
+    }
+
+    await prisma.lead.delete({
+      where: { id: String(id) },
+    });
+
+    res.json({ success: true, data: { id } });
+  } catch (error) {
+    next(error);
+  }
+}
+
