@@ -1,9 +1,11 @@
+import { useState } from "react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/ui/StatusBadge"
 import { ContactLink } from "@/components/ui/ContactLink"
 import { Trash2, Phone, MapPin, Calendar, Loader2 } from "lucide-react"
 import { Link } from "react-router-dom"
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 
 export interface Lead {
   id: string
@@ -35,6 +37,8 @@ export function LeadCard({
   isArchiving = false,
   isDeleting = false
 }: LeadCardProps) {
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false)
+
   const formatDate = (dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString("en-KE", {
@@ -108,29 +112,39 @@ export function LeadCard({
           </Button>
         )}
         {lead.status === "ARCHIVED" && (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => {
-              if (window.confirm(`Are you sure you want to permanently delete "${lead.name}"? This action cannot be undone.`)) {
+          <>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setShowConfirmDelete(true)}
+              disabled={isDeleting}
+              className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold h-9 rounded-md"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="size-3.5" />
+                  Delete Permanently
+                </>
+              )}
+            </Button>
+            <ConfirmDialog
+              isOpen={showConfirmDelete}
+              onOpenChange={setShowConfirmDelete}
+              title="Delete Lead Permanently"
+              description={`Are you sure you want to permanently delete "${lead.name}"? This action cannot be undone.`}
+              confirmText="Delete"
+              onConfirm={() => {
                 onDelete?.(lead.id)
-              }
-            }}
-            disabled={isDeleting}
-            className="flex items-center gap-1.5 cursor-pointer text-xs font-semibold h-9 rounded-md"
-          >
-            {isDeleting ? (
-              <>
-                <Loader2 className="size-3.5 animate-spin" />
-                Deleting...
-              </>
-            ) : (
-              <>
-                <Trash2 className="size-3.5" />
-                Delete Permanently
-              </>
-            )}
-          </Button>
+              }}
+              isLoading={isDeleting}
+              variant="destructive"
+            />
+          </>
         )}
       </CardFooter>
     </Card>

@@ -6,11 +6,13 @@ import { ContactLink } from "@/components/ui/ContactLink"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, MapPin, Phone, Calendar, ExternalLink, Trash2, Loader2, CheckCircle2 } from "lucide-react"
 import { useState } from "react"
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 
 export function LeadDetails() {
   const { id = "" } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false)
 
   const { data: lead, isLoading, error: fetchError } = useLead(id)
 
@@ -52,20 +54,20 @@ export function LeadDetails() {
     })
   }
 
-  const handleDelete = () => {
+  const handleDeleteConfirm = () => {
     if (!lead) return
-    if (window.confirm(`Are you sure you want to permanently delete "${lead.name}"? This action cannot be undone.`)) {
-      setError(null)
-      deleteMutation.mutate(id, {
-        onSuccess: () => {
-          navigate("/")
-        },
-        onError: (err: any) => {
-          const errMsg = err.response?.data?.error || err.message || "Failed to delete lead permanently."
-          setError(`Failed to delete lead permanently: ${errMsg}`)
-        }
-      })
-    }
+    setError(null)
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        setShowConfirmDelete(false)
+        navigate("/")
+      },
+      onError: (err: any) => {
+        setShowConfirmDelete(false)
+        const errMsg = err.response?.data?.error || err.message || "Failed to delete lead permanently."
+        setError(`Failed to delete lead permanently: ${errMsg}`)
+      }
+    })
   }
 
   if (isLoading) {
@@ -265,24 +267,36 @@ export function LeadDetails() {
             )}
 
             {lead.status === "ARCHIVED" && (
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="h-10 px-4 rounded-md cursor-pointer flex items-center gap-2 font-semibold"
-              >
-                {isDeleting ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin" />
-                    Deleting...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="size-4" />
-                    Delete Permanently
-                  </>
-                )}
-              </Button>
+              <>
+                <Button
+                  variant="destructive"
+                  onClick={() => setShowConfirmDelete(true)}
+                  disabled={isDeleting}
+                  className="h-10 px-4 rounded-md cursor-pointer flex items-center gap-2 font-semibold"
+                >
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="size-4" />
+                      Delete Permanently
+                    </>
+                  )}
+                </Button>
+                <ConfirmDialog
+                  isOpen={showConfirmDelete}
+                  onOpenChange={setShowConfirmDelete}
+                  title="Delete Lead Permanently"
+                  description={`Are you sure you want to permanently delete "${lead.name}"? This action cannot be undone.`}
+                  confirmText="Delete"
+                  onConfirm={handleDeleteConfirm}
+                  isLoading={isDeleting}
+                  variant="destructive"
+                />
+              </>
             )}
           </CardFooter>
         </Card>

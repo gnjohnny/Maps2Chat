@@ -55,3 +55,14 @@ This registry lists the central reusable component primitives to construct the M
 - **Tokens/Styles**:
   - Trigger Button: `bg-primary text-primary-foreground hover:bg-primary/90`
   - Loading State: Integrates a spinning lucide Loader icon when action is executing.
+
+---
+
+## 7. Confirm Dialog (`client/src/components/ui/ConfirmDialog.tsx`)
+- **Structure**: Reusable modal constructed from Dialog primitives to confirm destructive or critical actions (e.g. permanent lead deletion).
+- **Tokens/Styles**:
+  - Dialog Content: `fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg sm:max-w-[425px] sm:rounded-lg`
+  - Title Text: `text-lg font-semibold leading-none tracking-tight`
+  - Description Text: `text-sm text-muted-foreground mt-2`
+  - Buttons: Gap-2, Cancel -> `variant="outline"`, Confirm -> `variant="destructive"` (default) or custom variants. Disables interaction and displays a spinning `Loader2` during mutations.
+

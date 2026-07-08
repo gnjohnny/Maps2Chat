@@ -83,3 +83,5 @@
 | 2026-07-06 | Database Choice           | Neon Serverless PostgreSQL with Prisma     | Ensures scalability, compatibility with Node.js serverless execution, and provides robust type-safety via Prisma Client. |
 | 2026-07-06 | UI Theme                  | Emerald styling with Light/Dark Mode       | Aesthetic scheme that feels premium, with states maps matching standard alert definitions.                               |
 | 2026-07-08 | Client Loading States     | Spinner loaders and inputs disable states  | Implemented inline Loader2 states on active mutations (Contact, Archive, Create Lead, Scrape) and disabled form inputs during submit to enrich operator experience and prevent dual-actions. |
+| 2026-07-08 | Confirmation Modals       | Reusable shadcn/ui ConfirmDialog           | Replaced native browser `window.confirm` dialogs with a custom styled ConfirmDialog component built using Dialog primitives to maintain Emerald theme and support loading/disabled states during delete operations. |
+
