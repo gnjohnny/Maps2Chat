@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Login } from "@/pages/Login"
 import { Dashboard } from "@/pages/Dashboard"
 import { LeadDetails } from "@/pages/LeadDetails"
+import { Privacy } from "@/pages/Privacy"
+import { Terms } from "@/pages/Terms"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -114,6 +116,8 @@ function AppRoutes() {
           )
         }
       />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

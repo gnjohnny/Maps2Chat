@@ -1,23 +1,30 @@
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 interface LoginProps {
-  onLogin: () => void
+  onLogin: () => void;
 }
 
 export function Login({ onLogin }: LoginProps) {
-  const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
-    document.title = "Login | Maps2Chat - Localized B2B Outreach CRM"
-  }, [])
+    document.title = "Login | Maps2Chat - Localized B2B Outreach CRM";
+  }, []);
 
   const handleLoginClick = () => {
-    setIsLoggingIn(true)
-    onLogin()
-  }
+    setIsLoggingIn(true);
+    onLogin();
+  };
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-slate-950 relative overflow-hidden font-sans">
       {/* Decorative blurred spheres */}
@@ -29,16 +36,17 @@ export function Login({ onLogin }: LoginProps) {
         <Card className="border border-slate-800 bg-slate-900/60 backdrop-blur-xl shadow-2xl rounded-2xl overflow-hidden text-center p-6">
           <CardHeader className="flex flex-col items-center gap-3">
             {/* Logo Icon */}
-            <div className="size-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-emerald-500/20">
+            <div className="size-12 rounded-xl bg-linear-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-emerald-500/20">
               M
             </div>
-            
+
             <div className="flex flex-col gap-1">
               <CardTitle className="text-2xl font-bold text-white tracking-tight">
                 Welcome to Maps2Chat
               </CardTitle>
               <CardDescription className="text-slate-400 text-sm max-w-xs mx-auto">
-                Localized B2B lead generation and native outreach manager for Kenyan operators.
+                Localized B2B lead generation and native outreach manager for
+                Kenyan operators.
               </CardDescription>
             </div>
           </CardHeader>
@@ -77,7 +85,12 @@ export function Login({ onLogin }: LoginProps) {
               ) : (
                 <>
                   {/* Google SVG Icon */}
-                  <svg className="size-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    className="size-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                       fill="#4285F4"
@@ -101,7 +114,14 @@ export function Login({ onLogin }: LoginProps) {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Footer Links */}
+        <div className="mt-6 flex items-center justify-center gap-4 text-xs text-slate-500 relative z-10">
+          <Link to="/privacy" className="hover:text-emerald-500 transition-colors">Privacy Policy</Link>
+          <span>•</span>
+          <Link to="/terms" className="hover:text-emerald-500 transition-colors">Terms of Service</Link>
+        </div>
       </div>
     </div>
-  )
+  );
 }

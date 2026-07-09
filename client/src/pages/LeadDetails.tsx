@@ -1,33 +1,54 @@
-import { useParams, useNavigate, Link } from "react-router-dom"
-import { useLead, useContactLead, useArchiveLead, useDeleteLead } from "@/hooks/useLeads"
-import { Button } from "@/components/ui/button"
-import { StatusBadge } from "@/components/ui/StatusBadge"
-import { ContactLink } from "@/components/ui/ContactLink"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowLeft, MapPin, Phone, Calendar, ExternalLink, Trash2, Loader2, CheckCircle2 } from "lucide-react"
-import { useState, useEffect } from "react"
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
+import { useParams, useNavigate, Link } from "react-router-dom";
+import {
+  useLead,
+  useContactLead,
+  useArchiveLead,
+  useDeleteLead,
+} from "@/hooks/useLeads";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { ContactLink } from "@/components/ui/ContactLink";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ArrowLeft,
+  MapPin,
+  Phone,
+  Calendar,
+  ExternalLink,
+  Trash2,
+  Loader2,
+  CheckCircle2,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export function LeadDetails() {
-  const { id = "" } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const [error, setError] = useState<string | null>(null)
-  const [showConfirmDelete, setShowConfirmDelete] = useState(false)
+  const { id = "" } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
-  const { data: lead, isLoading, error: fetchError } = useLead(id)
+  const { data: lead, isLoading, error: fetchError } = useLead(id);
 
   // Set document title dynamically based on lead data
   useEffect(() => {
     if (lead) {
-      document.title = `${lead.name} | Lead Details - Maps2Chat`
+      document.title = `${lead.name} | Lead Details - Maps2Chat`;
     } else {
-      document.title = "Loading Lead Details... | Maps2Chat"
+      document.title = "Loading Lead Details... | Maps2Chat";
     }
-  }, [lead])
+  }, [lead]);
 
-  const contactMutation = useContactLead()
-  const archiveMutation = useArchiveLead()
-  const deleteMutation = useDeleteLead()
+  const contactMutation = useContactLead();
+  const archiveMutation = useArchiveLead();
+  const deleteMutation = useDeleteLead();
 
   const formatDate = (dateString: string) => {
     try {
@@ -37,47 +58,54 @@ export function LeadDetails() {
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      })
+      });
     } catch {
-      return dateString
+      return dateString;
     }
-  }
+  };
 
   const handleContact = () => {
-    setError(null)
+    setError(null);
     contactMutation.mutate(id, {
       onError: (err: any) => {
-        const errMsg = err.response?.data?.error || err.message || "Failed to update contact status."
-        setError(`Failed to update contact status: ${errMsg}`)
-      }
-    })
-  }
+        const errMsg =
+          err.response?.data?.error ||
+          err.message ||
+          "Failed to update contact status.";
+        setError(`Failed to update contact status: ${errMsg}`);
+      },
+    });
+  };
 
   const handleArchive = () => {
-    setError(null)
+    setError(null);
     archiveMutation.mutate(id, {
       onError: (err: any) => {
-        const errMsg = err.response?.data?.error || err.message || "Failed to archive lead."
-        setError(`Failed to archive lead: ${errMsg}`)
-      }
-    })
-  }
+        const errMsg =
+          err.response?.data?.error || err.message || "Failed to archive lead.";
+        setError(`Failed to archive lead: ${errMsg}`);
+      },
+    });
+  };
 
   const handleDeleteConfirm = () => {
-    if (!lead) return
-    setError(null)
+    if (!lead) return;
+    setError(null);
     deleteMutation.mutate(id, {
       onSuccess: () => {
-        setShowConfirmDelete(false)
-        navigate("/")
+        setShowConfirmDelete(false);
+        navigate("/");
       },
       onError: (err: any) => {
-        setShowConfirmDelete(false)
-        const errMsg = err.response?.data?.error || err.message || "Failed to delete lead permanently."
-        setError(`Failed to delete lead permanently: ${errMsg}`)
-      }
-    })
-  }
+        setShowConfirmDelete(false);
+        const errMsg =
+          err.response?.data?.error ||
+          err.message ||
+          "Failed to delete lead permanently.";
+        setError(`Failed to delete lead permanently: ${errMsg}`);
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -101,7 +129,7 @@ export function LeadDetails() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (fetchError || !lead) {
@@ -110,9 +138,13 @@ export function LeadDetails() {
         <Card className="border border-slate-200 dark:border-slate-800 bg-card rounded-2xl max-w-md w-full p-6 text-center space-y-4">
           <h3 className="text-xl font-bold text-foreground">Lead Not Found</h3>
           <p className="text-sm text-muted-foreground">
-            The lead details could not be retrieved. It may have been permanently deleted or does not exist.
+            The lead details could not be retrieved. It may have been
+            permanently deleted or does not exist.
           </p>
-          <Button asChild className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium cursor-pointer">
+          <Button
+            asChild
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium cursor-pointer"
+          >
             <Link to="/">
               <ArrowLeft className="size-4 mr-2" />
               Back to Dashboard
@@ -120,16 +152,16 @@ export function LeadDetails() {
           </Button>
         </Card>
       </div>
-    )
+    );
   }
 
-  const isContacting = contactMutation.isPending
-  const isArchiving = archiveMutation.isPending
-  const isDeleting = deleteMutation.isPending
+  const isContacting = contactMutation.isPending;
+  const isArchiving = archiveMutation.isPending;
+  const isDeleting = deleteMutation.isPending;
 
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    lead.name + ", " + lead.address
-  )}&query_place_id=${lead.placeId}`
+    lead.name + ", " + lead.address,
+  )}&query_place_id=${lead.placeId}`;
 
   return (
     <div className="min-h-screen bg-background p-6 flex flex-col items-center font-sans">
@@ -152,7 +184,10 @@ export function LeadDetails() {
         {error && (
           <div className="bg-destructive/10 border border-destructive/20 text-destructive text-sm rounded-lg p-4 flex items-center justify-between animate-fade-in">
             <span>{error}</span>
-            <button onClick={() => setError(null)} className="text-xs font-semibold underline hover:no-underline">
+            <button
+              onClick={() => setError(null)}
+              className="text-xs font-semibold underline hover:no-underline"
+            >
               Dismiss
             </button>
           </div>
@@ -180,8 +215,12 @@ export function LeadDetails() {
               <div className="flex items-start gap-3">
                 <MapPin className="size-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Address</span>
-                  <p className="text-sm text-foreground leading-relaxed">{lead.address}</p>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Address
+                  </span>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {lead.address}
+                  </p>
                 </div>
               </div>
 
@@ -189,7 +228,9 @@ export function LeadDetails() {
               <div className="flex items-start gap-3">
                 <Phone className="size-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">WhatsApp Contact</span>
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    WhatsApp Contact
+                  </span>
                   <p className="text-sm text-foreground">
                     <a
                       href={`tel:+${lead.whatsappNumber}`}
@@ -206,8 +247,12 @@ export function LeadDetails() {
                 <div className="flex items-start gap-3">
                   <Calendar className="size-5 text-muted-foreground shrink-0 mt-0.5" />
                   <div className="space-y-0.5">
-                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Fetched Date</span>
-                    <p className="text-sm text-foreground">{formatDate(lead.fetchedAt)}</p>
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Fetched Date
+                    </span>
+                    <p className="text-sm text-foreground">
+                      {formatDate(lead.fetchedAt)}
+                    </p>
                   </div>
                 </div>
 
@@ -215,8 +260,12 @@ export function LeadDetails() {
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="size-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                     <div className="space-y-0.5">
-                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Contacted Date</span>
-                      <p className="text-sm text-foreground">{formatDate(lead.contactedAt)}</p>
+                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                        Contacted Date
+                      </span>
+                      <p className="text-sm text-foreground">
+                        {formatDate(lead.contactedAt)}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -230,12 +279,16 @@ export function LeadDetails() {
                 variant="secondary"
                 className="w-full justify-between h-10 border border-slate-200 dark:border-slate-800 cursor-pointer"
               >
-                <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <span className="flex items-center gap-2">
                     <ExternalLink className="size-4" />
                     View on Google Maps
                   </span>
-                  <span className="text-xs text-muted-foreground font-mono truncate max-w-[200px]">
+                  <span className="text-xs text-muted-foreground font-mono truncate max-w-50">
                     Place ID: {lead.placeId}
                   </span>
                 </a>
@@ -253,7 +306,7 @@ export function LeadDetails() {
                 disabled={isArchiving}
               />
             )}
-            
+
             {lead.status !== "ARCHIVED" && (
               <Button
                 variant="outline"
@@ -311,5 +364,5 @@ export function LeadDetails() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
