@@ -69,6 +69,7 @@
 - [ ] Verify Google OAuth redirect and JWT generation flow
 - [ ] Run edge case testing (phone numbers with missing spacing, duplicates, wrong bounding coordinates)
 - [x] Polish UI animations and loading spinners using shadcn components
+- [x] Add SEO meta tags, OpenGraph schemas, Twitter Cards, and dynamic routing title updates
 
 ---
 
@@ -84,4 +85,5 @@
 | 2026-07-06 | UI Theme                  | Emerald styling with Light/Dark Mode       | Aesthetic scheme that feels premium, with states maps matching standard alert definitions.                               |
 | 2026-07-08 | Client Loading States     | Spinner loaders and inputs disable states  | Implemented inline Loader2 states on active mutations (Contact, Archive, Create Lead, Scrape) and disabled form inputs during submit to enrich operator experience and prevent dual-actions. |
 | 2026-07-08 | Confirmation Modals       | Reusable shadcn/ui ConfirmDialog           | Replaced native browser `window.confirm` dialogs with a custom styled ConfirmDialog component built using Dialog primitives to maintain Emerald theme and support loading/disabled states during delete operations. |
+| 2026-07-09 | SEO & Metadata            | Configured static & dynamic meta elements | Added OpenGraph, Twitter card tags, brand preview image (og-image.jpg), route-specific dynamic titles, and custom Emerald brand favicon to optimize search, link previews, and tab theme consistency. |
 

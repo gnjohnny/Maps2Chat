@@ -20,6 +20,17 @@ export function Dashboard({ onLogout, user }: DashboardProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Set document title based on current tab
+  useEffect(() => {
+    const tabNames: Record<string, string> = {
+      pending: "Pending Queue",
+      contacted: "Contacted Ledger",
+      archived: "Archived Vault",
+    }
+    const tabName = tabNames[currentTab] || "Dashboard"
+    document.title = `${tabName} | Maps2Chat - Localized B2B Outreach CRM`
+  }, [currentTab])
+
   // Clear any active action errors when switching tabs
   useEffect(() => {
     setError(null)

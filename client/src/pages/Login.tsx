@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
@@ -9,6 +9,10 @@ interface LoginProps {
 
 export function Login({ onLogin }: LoginProps) {
   const [isLoggingIn, setIsLoggingIn] = useState(false)
+
+  useEffect(() => {
+    document.title = "Login | Maps2Chat - Localized B2B Outreach CRM"
+  }, [])
 
   const handleLoginClick = () => {
     setIsLoggingIn(true)

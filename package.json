@@ -1,0 +1,13 @@
+{
+  "name": "maps2chat-monolith",
+  "version": "1.0.0",
+  "description": "Unified Maps2Chat client and API deployment for Render",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm install --prefix api && npm install --prefix client",
+    "build:client": "npm run build --prefix client",
+    "build:api": "npm run prisma:generate --prefix api && npm run build --prefix api",
+    "build": "npm run build:client && npm run build:api",
+    "start": "npm start --prefix api"
+  }
+}

@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/ui/StatusBadge"
 import { ContactLink } from "@/components/ui/ContactLink"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, MapPin, Phone, Calendar, ExternalLink, Trash2, Loader2, CheckCircle2 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 
 export function LeadDetails() {
@@ -15,6 +15,15 @@ export function LeadDetails() {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false)
 
   const { data: lead, isLoading, error: fetchError } = useLead(id)
+
+  // Set document title dynamically based on lead data
+  useEffect(() => {
+    if (lead) {
+      document.title = `${lead.name} | Lead Details - Maps2Chat`
+    } else {
+      document.title = "Loading Lead Details... | Maps2Chat"
+    }
+  }, [lead])
 
   const contactMutation = useContactLead()
   const archiveMutation = useArchiveLead()

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const api = axios.create({
   baseURL: apiBaseUrl,
@@ -17,7 +17,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Global response handler for handling session expiry (401)
@@ -31,5 +31,5 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
     return Promise.reject(error);
-  }
+  },
 );
