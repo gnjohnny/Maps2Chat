@@ -3,8 +3,8 @@
 ## Current Status
 
 - **Active Phase**: Phase 7 — Verification & Polishing
-- **Last Completed Item**: Wired React frontend states and mutations to backend Express API endpoints using TanStack Query; added validation error displays, alert banners, and resolved OAuth strategy callback paths.
-- **Next Item**: Deploy configurations to live hosting, setup Google Places/OAuth credentials, and perform end-to-end integration testing.
+- **Last Completed Item**: Implemented server-side pagination, date range filtering using Shadcn calendar, and field sorting for the Contacted Ledger, with full type safety across Express/Prisma and React/TanStack Query.
+- **Next Item**: Perform end-to-end integration testing for the ingestion scraper daemon, verify OAuth strategy callback paths, and run edge-case tests.
 
 ## Progress Checklist
 
@@ -62,6 +62,7 @@
 - [x] Wire dashboard lists to backend Express API (`GET /api/leads`)
 - [x] Create TanStack Query mutations for `PATCH /api/leads/:id/contact`
 - [x] Construct form validation schemas using Zod and React Hook Form (for manual archiving/creation)
+- [x] Add Pagination, filtering by choosing from to which date using Shadcn calender and sorting of contacted ledger.
 
 ### Phase 7 — Verification & Polishing
 
@@ -75,15 +76,14 @@
 
 ## Decisions Made During Build
 
-| Date       | Category                  | Decision                                   | Context / Rationale                                                                                                      |
-| ---------- | ------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| 2026-07-06 | Monolith Folder Structure | Monolith with `api/` and `client/` folders | Keeps frontend/backend code isolated while keeping them in a single repository for easy deployment.                      |
-| 2026-07-06 | Scaffolding Location      | Place configuration files in `context/`    | Changed from default `docs/` folder to `context/` based on user request.                                                 |
-| 2026-07-06 | Rule Location             | Create standalone `AGENTS.md` at root      | Created at the root directory instead of inside `.agents/` as requested by the user.                                     |
-| 2026-07-06 | Environment Config        | Separate `.env` files                      | Kept configuration files specific to their execution scopes (`api/.env` and `client/.env`) to prevent leakage.           |
-| 2026-07-06 | Database Choice           | Neon Serverless PostgreSQL with Prisma     | Ensures scalability, compatibility with Node.js serverless execution, and provides robust type-safety via Prisma Client. |
-| 2026-07-06 | UI Theme                  | Emerald styling with Light/Dark Mode       | Aesthetic scheme that feels premium, with states maps matching standard alert definitions.                               |
-| 2026-07-08 | Client Loading States     | Spinner loaders and inputs disable states  | Implemented inline Loader2 states on active mutations (Contact, Archive, Create Lead, Scrape) and disabled form inputs during submit to enrich operator experience and prevent dual-actions. |
+| Date       | Category                  | Decision                                   | Context / Rationale                                                                                                                                                                                                 |
+| ---------- | ------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-07-06 | Monolith Folder Structure | Monolith with `api/` and `client/` folders | Keeps frontend/backend code isolated while keeping them in a single repository for easy deployment.                                                                                                                 |
+| 2026-07-06 | Scaffolding Location      | Place configuration files in `context/`    | Changed from default `docs/` folder to `context/` based on user request.                                                                                                                                            |
+| 2026-07-06 | Rule Location             | Create standalone `AGENTS.md` at root      | Created at the root directory instead of inside `.agents/` as requested by the user.                                                                                                                                |
+| 2026-07-06 | Environment Config        | Separate `.env` files                      | Kept configuration files specific to their execution scopes (`api/.env` and `client/.env`) to prevent leakage.                                                                                                      |
+| 2026-07-06 | Database Choice           | Neon Serverless PostgreSQL with Prisma     | Ensures scalability, compatibility with Node.js serverless execution, and provides robust type-safety via Prisma Client.                                                                                            |
+| 2026-07-06 | UI Theme                  | Emerald styling with Light/Dark Mode       | Aesthetic scheme that feels premium, with states maps matching standard alert definitions.                                                                                                                          |
+| 2026-07-08 | Client Loading States     | Spinner loaders and inputs disable states  | Implemented inline Loader2 states on active mutations (Contact, Archive, Create Lead, Scrape) and disabled form inputs during submit to enrich operator experience and prevent dual-actions.                        |
 | 2026-07-08 | Confirmation Modals       | Reusable shadcn/ui ConfirmDialog           | Replaced native browser `window.confirm` dialogs with a custom styled ConfirmDialog component built using Dialog primitives to maintain Emerald theme and support loading/disabled states during delete operations. |
-| 2026-07-09 | SEO & Metadata            | Configured static & dynamic meta elements | Added OpenGraph, Twitter card tags, brand preview image (og-image.jpg), route-specific dynamic titles, and custom Emerald brand favicon to optimize search, link previews, and tab theme consistency. |
-
+| 2026-07-09 | SEO & Metadata            | Configured static & dynamic meta elements  | Added OpenGraph, Twitter card tags, brand preview image (og-image.jpg), route-specific dynamic titles, and custom Emerald brand favicon to optimize search, link previews, and tab theme consistency.               |

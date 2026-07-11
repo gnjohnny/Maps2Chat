@@ -1,32 +1,34 @@
-# Memory — SEO, Gitignore, Readme, and Security Fixes
+# Memory — Contacted Ledger Pagination, Sorting, and Date Range Filtering
 
-Last updated: 2026-07-09T11:59:30+03:00
+Last updated: 2026-07-11T14:16:00+03:00
 
 ## What was built
 
-- **Auth Middleware Insecure Fallback Fix**: Updated [auth.ts](file:///C:/Users/Johnny/Agy_test/Maps2Chat/api/src/middleware/auth.ts) to strictly verify JWTs against `process.env.JWT_SECRET!`, removing the insecure default string fallback.
-- **Root Gitignore Configuration**: Added [`.gitignore`](file:///C:/Users/Johnny/Agy_test/Maps2Chat/.gitignore) to exclude node dependencies, compiled build directories (`dist/`), secret environment variables (`*.env`), and runtime logs while allowing the root README and package definitions to be tracked.
-- **Root Readme Creation**: Generated a comprehensive [README.md](file:///C:/Users/Johnny/Agy_test/Maps2Chat/README.md) detailing key features, technical stack, folder structures, local env configurations, and operational workflows.
-- **Dynamic Title Routing & SEO**: Added meta, OpenGraph, and Twitter tags inside [index.html](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/index.html) and dynamic document title page updates across [Login.tsx](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/src/pages/Login.tsx), [Dashboard.tsx](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/src/pages/Dashboard.tsx), and [LeadDetails.tsx](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/src/pages/LeadDetails.tsx).
-- **Serving Production Assets & Self-ping Loop**: Added catch-all routing to serve static assets in [index.ts](file:///C:/Users/Johnny/Agy_test/Maps2Chat/api/src/index.ts) and a 14-minute self-ping helper using `RENDER_EXTERNAL_URL` to prevent Render dyno sleeping.
+- **Shadcn Calendar & Popover Components**: Added Radix [popover.tsx](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/src/components/ui/popover.tsx), styled [calendar.tsx](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/src/components/ui/calendar.tsx) using the Emerald theme, and [date-range-picker.tsx](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/src/components/ui/date-range-picker.tsx).
+- **Backend Pagination and Filtering Routing**: Modified [leadController.ts](file:///C:/Users/Johnny/Agy_test/Maps2Chat/api/src/controllers/leadController.ts) to parse query parameters (`page`, `limit`, `startDate`, `endDate`, `sortBy`, `sortOrder`), build Prisma filters, query total counts, and return paginated responses.
+- **Client-Side Query & Dashboard Integration**:
+  - Updated API hook [useLeads.ts](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/src/hooks/useLeads.ts) to pass pagination/sorting/filtering query keys.
+  - Refactored [Dashboard.tsx](file:///C:/Users/Johnny/Agy_test/Maps2Chat/client/src/pages/Dashboard.tsx) to manage state for date range, active page, sorting column, and limit parameters. 
+  - Added filter control bar and pagination navigation footer (Previous/Next page, page size selection, bounds descriptor) on the Contacted Ledger tab.
 
 ## Decisions made
 
-- **Safe-Secure Fail Strategy**: Decided to crash or reject tokens immediately upon missing JWT configurations in the environment, rather than falling back to default mock signing secrets.
-- **Repository Cleanliness**: Configured root exclusions to keep AI agent metadata (`.agents/`, `context/`, `skills-lock.json`, and run logs) off the codebase commits while permitting monolithic configurations (`package.json`, `README.md`).
+- **Server-Side Data Processing**: Paging, ordering, and date range filters are executed on the PostgreSQL database via Prisma for optimal performance and scalability as lead count increases.
+- **Client-Side Boundary Resolution**: Shifted the timezone correction logic to the client by computing local midnight/end-of-day bounds and converting them to ISO format prior to network request. This keeps the backend server simple and timezone-agnostic.
 
 ## Problems solved
 
-- **PowerShell Script Restriction**: Bypassed Windows PowerShell security policies restricting execution of `.ps1` files by routing local script execution directly through the cmd executor (`cmd.exe /c "npm run build"`).
+- **PowerShell Script Policy Blocks**: Installed Radix popover and date picker packages by calling `npm.cmd` explicitly to bypass script execution restrictions on Windows PowerShell.
+- **Date-Shift Offset Bug**: Resolved a timezone bug where local-to-UTC conversion moved calendar selections backwards by setting local midnight (`00:00:00.000`) and end-of-day (`23:59:59.999`) values before invoking `.toISOString()`.
 
 ## Current state
 
-- Client and API packages both build successfully with zero typescript or compiling errors.
-- All latest changes have been staged, committed, and successfully pushed to the remote GitHub origin main branch.
+- Frontend client and backend Express API both compile successfully (running `npx tsc --noEmit` finishes with zero warnings or errors).
+- Phase 6 (Client API & Query Integration) is now 100% complete.
 
 ## Next session starts with
 
-- Deploying configurations to live hosting, setting up Places/OAuth credentials, and performing end-to-end integration testing for the Google Places API scraper daemon and Google OAuth callback redirect loop.
+- Executing end-to-end integration tests on the Places ingestion scraper daemon, verifying Google OAuth callback redirects, and checking database constraints for duplicate key checks.
 
 ## Open questions
 

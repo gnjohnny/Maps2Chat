@@ -1,43 +1,49 @@
-import { useState } from "react"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { StatusBadge } from "@/components/ui/StatusBadge"
-import { ContactLink } from "@/components/ui/ContactLink"
-import { Trash2, Phone, MapPin, Calendar, Loader2 } from "lucide-react"
-import { Link } from "react-router-dom"
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { ContactLink } from "@/components/ui/ContactLink";
+import { Trash2, Phone, MapPin, Calendar, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export interface Lead {
-  id: string
-  placeId: string
-  name: string
-  address: string
-  whatsappNumber: string
-  status: "PENDING" | "CONTACTED" | "ARCHIVED"
-  fetchedAt: string
-  contactedAt?: string | null
+  id: string;
+  placeId: string;
+  name: string;
+  address: string;
+  whatsappNumber: string;
+  status: "PENDING" | "CONTACTED" | "ARCHIVED";
+  fetchedAt: string;
+  contactedAt?: string | null;
 }
 
 interface LeadCardProps {
-  lead: Lead
-  onContact: (id: string) => void
-  onArchive: (id: string) => void
-  onDelete?: (id: string) => void
-  isContacting?: boolean
-  isArchiving?: boolean
-  isDeleting?: boolean
+  lead: Lead;
+  onContact: (id: string) => void;
+  onArchive: (id: string) => void;
+  onDelete?: (id: string) => void;
+  isContacting?: boolean;
+  isArchiving?: boolean;
+  isDeleting?: boolean;
 }
 
-export function LeadCard({ 
-  lead, 
-  onContact, 
-  onArchive, 
+export function LeadCard({
+  lead,
+  onContact,
+  onArchive,
   onDelete,
-  isContacting = false, 
+  isContacting = false,
   isArchiving = false,
-  isDeleting = false
+  isDeleting = false,
 }: LeadCardProps) {
-  const [showConfirmDelete, setShowConfirmDelete] = useState(false)
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   const formatDate = (dateString: string) => {
     try {
@@ -47,18 +53,21 @@ export function LeadCard({
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      })
+      });
     } catch {
-      return dateString
+      return dateString;
     }
-  }
+  };
 
   return (
-    <Card className="rounded-xl border border-slate-200 dark:border-slate-800 bg-card shadow-sm hover:shadow-md hover:translate-y-[-2px] transition-all duration-200 overflow-hidden flex flex-col justify-between">
+    <Card className="rounded-xl border border-slate-200 dark:border-slate-800 bg-card shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden flex flex-col justify-between">
       <CardHeader className="p-4 pb-2">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-base font-semibold text-foreground tracking-tight line-clamp-1">
-            <Link to={`/leads/${lead.id}`} className="hover:text-emerald-600 dark:hover:text-emerald-400 hover:underline transition-colors">
+            <Link
+              to={`/leads/${lead.id}`}
+              className="hover:text-emerald-600 dark:hover:text-emerald-400 hover:underline transition-colors"
+            >
               {lead.name}
             </Link>
           </CardTitle>
@@ -85,7 +94,7 @@ export function LeadCard({
           </div>
         )}
       </CardContent>
-      <CardFooter className="p-4 pt-0 border-t border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-950/20 flex gap-2 justify-end pt-3">
+      <CardFooter className="p-4 border-t border-slate-100 dark:border-slate-900 bg-slate-50/50 dark:bg-slate-950/20 flex gap-2 justify-end pt-3">
         {lead.status === "PENDING" && (
           <ContactLink
             whatsappNumber={lead.whatsappNumber}
@@ -139,7 +148,7 @@ export function LeadCard({
               description={`Are you sure you want to permanently delete "${lead.name}"? This action cannot be undone.`}
               confirmText="Delete"
               onConfirm={() => {
-                onDelete?.(lead.id)
+                onDelete?.(lead.id);
               }}
               isLoading={isDeleting}
               variant="destructive"
@@ -148,5 +157,5 @@ export function LeadCard({
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }

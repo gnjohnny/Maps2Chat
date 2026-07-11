@@ -12,11 +12,41 @@ export interface Lead {
   contactedAt?: string | null;
 }
 
-export function useLeads(status: string) {
-  return useQuery<Lead[]>({
-    queryKey: ["leads", status.toUpperCase()],
+export interface PaginationInfo {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface LeadsResponseData {
+  leads: Lead[];
+  pagination: PaginationInfo;
+}
+
+export interface LeadsQueryParams {
+  page?: number;
+  limit?: number;
+  startDate?: string;
+  endDate?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}
+
+export function useLeads(status: string, params?: LeadsQueryParams) {
+  return useQuery<LeadsResponseData>({
+    queryKey: ["leads", status.toUpperCase(), params],
     queryFn: async () => {
-      const { data } = await api.get(`/leads?status=${status.toUpperCase()}`);
+      const queryParams = new URLSearchParams();
+      queryParams.append("status", status.toUpperCase());
+      if (params?.page) queryParams.append("page", String(params.page));
+      if (params?.limit) queryParams.append("limit", String(params.limit));
+      if (params?.startDate) queryParams.append("startDate", params.startDate);
+      if (params?.endDate) queryParams.append("endDate", params.endDate);
+      if (params?.sortBy) queryParams.append("sortBy", params.sortBy);
+      if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+
+      const { data } = await api.get(`/leads?${queryParams.toString()}`);
       return data.data;
     },
   });
@@ -108,4 +138,3 @@ export function useDeleteLead() {
     },
   });
 }
-

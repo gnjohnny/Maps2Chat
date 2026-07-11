@@ -9,7 +9,7 @@ export async function getLeads(
   next: NextFunction,
 ) {
   try {
-    const { status } = req.query;
+    const { status, page, limit, startDate, endDate, sortBy, sortOrder } = req.query;
 
     const filterStatus = status
       ? (String(status).toUpperCase() as LeadStatus)
@@ -22,12 +22,54 @@ export async function getLeads(
       return;
     }
 
-    const leads = await prisma.lead.findMany({
-      where: filterStatus ? { status: filterStatus } : undefined,
-      orderBy: { fetchedAt: "desc" },
-    });
+    // Pagination parameters parsing
+    const pageNum = parseInt(page as string) || 1;
+    const limitNum = parseInt(limit as string) || 10;
+    const skip = (pageNum - 1) * limitNum;
 
-    res.json({ success: true, data: leads });
+    // Filters building
+    const where: any = filterStatus ? { status: filterStatus } : {};
+
+    // Date range filtering on contactedAt
+    if (startDate || endDate) {
+      where.contactedAt = {};
+      if (startDate) {
+        where.contactedAt.gte = new Date(startDate as string);
+      }
+      if (endDate) {
+        where.contactedAt.lte = new Date(endDate as string);
+      }
+    }
+
+    // Sorting parameters
+    const validSortFields = ["name", "fetchedAt", "contactedAt"];
+    const sortByField = (sortBy && validSortFields.includes(sortBy as string))
+      ? (sortBy as string)
+      : "fetchedAt";
+    const sortOrderDir = sortOrder === "asc" ? "asc" : "desc";
+
+    const [leads, total] = await Promise.all([
+      prisma.lead.findMany({
+        where,
+        orderBy: { [sortByField]: sortOrderDir },
+        skip,
+        take: limitNum,
+      }),
+      prisma.lead.count({ where }),
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        leads,
+        pagination: {
+          total,
+          page: pageNum,
+          limit: limitNum,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      },
+    });
   } catch (error) {
     next(error);
   }
